@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <style>
+      #comments-container,
+      .new_comment_container {
+        width: 600px;
+        margin: 10px auto;
+        display: block;
+      }
+      #count{
+          text-align: center;
+      }
+      .comment {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        transition: 0.3s;
+        border-radius: 5px;
+        margin: 20px 0px;
+      }
+
+      .comment:hover {
+        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+      }
+
+      .comment {
+        padding: 16px;
+      }
+      #new_comment {
+        width: 90%;
+        margin: 0 auto;
+        display: block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+      }
+      .comment h4 {
+        margin-top: 0px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="new_comment_container">
+      <input type="text" id="new_comment" placeholder="New Comment"/>
+    </div>
+    <p id="count">Comments (0)</p>
+    <div id="comments-container">
+    </div>
+
+    <script>
+      let feed = [];
+      let new_comment = document.getElementById("new_comment");
+      new_comment.addEventListener("keyup", function(event) {
+        if (event.keyCode == 13) {
+          let newComment = new_comment.value;
+          if (newComment == "") {
+            alert("Please Enter Text In New Comment Text Box");
+          } else {
+            let date = new Date();
+            feed.push({
+              user: "Anonymous",
+              value: newComment,
+              id: 2,
+              timestamp: date.getTime(),
+              timeZoneOffset: date.getTimezoneOffset(),
+              likes: 0
+            });
+            showComments();
+          }
+          event.preventDefault();
+        }
+      });
+      loadData();
+      function loadData() {
+        let xobj = new XMLHttpRequest();
+        xobj.overrideMimeType("application/json");
+        xobj.open("GET", "data.json", true);
+        xobj.onreadystatechange = function() {
+          if (xobj.readyState == 4 && xobj.status == "200") {
+            feed = JSON.parse(xobj.responseText)["feed"];
+            showComments();
+          }
+        };
+        xobj.send(null);
+      }
+      function showComments() {
+        let comments_container = document.getElementById("comments-container");
+        comments_container.innerHTML = "";
+        feed.forEach((feedComment, key) => {
+          let comment = document.createElement("div");
+          let meta = document.createElement("h4");
+          let commentValue = document.createElement("p");
+          let likes = document.createElement("div");
+
+          meta.innerHTML =
+            "<h4><b>" +
+            feedComment.user +
+            "</b> - " +
+            new Date(feedComment.timestamp*1000).toLocaleString() +
+            "</h4>";
+          commentValue.innerHTML = feedComment.value;
+
+          comment.className = "comment";
+          likes.className = "likes";
+
+          likes.innerHTML =
+            "<i class='fa' onclick='newLike(" +
+            key +
+            ")'>&#xf087;</i> " +
+            feedComment.likes;
+
+          comment.append(meta);
+          comment.append(commentValue);
+          comment.append(likes);
+        });
+        document.getElementById("count").innerHTML = "Comments ("+feed.length+")";
+      }
+      function newLike(key) {
+        feed[key].likes = feed[key].likes + 1;
+        showComments();
+      }
+    </script>
+  </body>
+</html>

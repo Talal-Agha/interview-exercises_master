@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <style>
+      .container {
+        width: 40px;
+        float: left;
+        margin: 10px;
+        text-align: center;
+        color: #3a3a3a;
+      }
+      .bar_container {
+        height: 100px;
+        background-color: #f44336;
+      }
+      .bar {
+        background-color: #000000;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="main-container"></div>
+
+    <script>
+      loadData();
+      function loadData() {
+        var xobj = new XMLHttpRequest();
+        xobj.overrideMimeType("application/json");
+        xobj.open("GET", "data.json", true);
+        xobj.onreadystatechange = function() {
+          if (xobj.readyState == 4 && xobj.status == "200") {
+            createBars(JSON.parse(xobj.responseText));
+          }
+        };
+        xobj.send(null);
+      }
+      function createBars(res) {
+        res["data"].forEach(percentage => {
+          let container = document.createElement("div");
+          let bar_container = document.createElement("div");
+          let bar = document.createElement("div");
+          let percentage_node = document.createElement("p");
+          container.className = "container";
+
+          bar_container.className = "bar_container";
+          bar.style.height = percentage + "px";
+          bar.className = "bar";
+
+          bar_container.append(bar);
+
+          percentage_node.innerHTML = percentage + "%";
+          container.append(bar_container);
+          container.append(percentage_node);
+          document.getElementById("main-container").append(container);
+        });
+      }
+    </script>
+  </body>
+</html>

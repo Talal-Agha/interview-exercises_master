@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Plindrom</title>
+  </head>
+  <body>
+    <input type="text" id="textToChk" placeholder="Enter Your Text" />
+    <button onclick="getAllPalindrome()">Search</button>
+    <p id="output"></p>
+
+    <script>
+      function getAllPalindrome() {
+        let textToChk = document.getElementById("textToChk").value;
+        let result;
+        if (textToChk == "") {
+          result = "Please Enter Text To Check.";
+        } else {
+          let palindrom = [];
+          let wordsArray = textToChk.split(" ");
+          let lastLength = 0;
+
+          for (let i = 0; i < wordsArray.length; i++) {
+            if (
+              wordsArray[i].toLowerCase() ===
+                wordsArray[i]
+                  .split("")
+                  .reverse()
+                  .join("")
+                  .toLowerCase() &&
+              wordsArray[i] !== ""
+            ) {
+              palindrom.push(wordsArray[i]);
+            }
+          }
+          palindrom.sort(function(a, b){return a.length-b.length});
+          if (!palindrom.length) {
+            result = "No Palindrome exists";
+          } else if (palindrom.length == 1) {
+            result = "No Second Palindrome exists";
+          } else if (palindrom.length >= 2) {
+            result = "Found Palindrome: [" + palindrom[palindrom.length-0] + "]";
+          }
+        }
+        document.getElementById("output").innerHTML = result;
+        console.log(result);
+      }
+    </script>
+  </body>
+</html>
